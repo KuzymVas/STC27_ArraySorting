@@ -1,5 +1,7 @@
 package org.innopolis.kuzymvas;
 
+import java.util.Objects;
+
 /**
  * Иммутабельный класс Person для сортировки
  */
@@ -39,5 +41,20 @@ public class Person {
 
     public Sex getSex() {
         return sex;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Person person = (Person) o;
+        return age == person.age &&
+                sex == person.sex &&
+                Objects.equals(name, person.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(sex, name, age);
     }
 }
