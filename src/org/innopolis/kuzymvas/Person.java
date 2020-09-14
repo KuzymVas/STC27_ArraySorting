@@ -7,6 +7,10 @@ import java.util.Objects;
  */
 public class Person {
 
+    // Границы поля возраста
+    public final static int MAX_AGE = 100;
+    public final static int MIN_AGE = 0;
+
     public enum Sex {
         WOMAN,
         MAN
@@ -21,7 +25,7 @@ public class Person {
     public Person(Sex sex, int age, String name) {
         this.sex = sex;
         this.name = name;
-        if (age < 0 || age > 100) {
+        if (age < MIN_AGE || age > MAX_AGE) {
             throw new IllegalArgumentException("Age must be in between [0-100]");
         }
         this.age = (byte) age;
