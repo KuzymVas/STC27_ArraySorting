@@ -10,7 +10,8 @@ public class SortersFactory {
      * Возможные типы сортировщиков для тестирования
      */
     public enum SorterType {
-        MERGE // Сортировщик слиянием
+        MERGE, // Сортировщик слиянием
+        HEAP   // Сортировщик через бинарную кучу
     }
 
     /**
@@ -23,6 +24,7 @@ public class SortersFactory {
     public static <T> Sorter<T> getSorter(SorterType type, boolean throwExceptionOnEqual) {
         switch (type) {
             case MERGE: return new MergeSorter<>(throwExceptionOnEqual);
+            case HEAP:  return new HeapSorter<>(throwExceptionOnEqual);
             default: return null;
         }
     }

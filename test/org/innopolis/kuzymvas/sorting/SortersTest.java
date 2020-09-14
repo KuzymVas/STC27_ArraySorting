@@ -25,7 +25,8 @@ public class SortersTest {
     @Parameterized.Parameters
     public static Collection sortersToTest() {
         return Arrays.asList(new Object[][]{
-                {SortersFactory.SorterType.MERGE, "Merge Sorter"}
+                {SortersFactory.SorterType.MERGE, "Merge Sorter"},
+                {SortersFactory.SorterType.HEAP, "Heap Sorter"}
         });
     }
 

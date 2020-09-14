@@ -26,7 +26,7 @@ public class MergeSorter<T>  implements  Sorter<T>{
             return;
         }
         currentComparator = comparator;
-        T[] copy = Arrays.copyOf(array, array.length);
+        final T[] copy = Arrays.copyOf(array, array.length);
         topDownSplitMerge(copy,array, 0, array.length);
     }
 
@@ -57,7 +57,7 @@ public class MergeSorter<T>  implements  Sorter<T>{
         if ((end - start) <= 1)   { // Массивы из одного элемента считаются отсортированными
             return;
         }
-        int middle = (start + end)/2;
+        final int middle = (start + end)/2;
         // Целевой и рабочий массив меняются местами на каждом уровне рекурсии
         topDownSplitMerge(dest, source, start, middle);
         topDownSplitMerge(dest, source, middle, end);
