@@ -39,68 +39,71 @@ public class Main {
         final Comparator<Person> comparator = new PersonComparator();
         System.out.println("Демонстрация работы сортировщиков:");
         System.out.println(" Исходный массив = " + Arrays.toString(humanSizeArrayOriginal));
-        final Person[] sortedByMerge = getSortingResults(mergeSorter,comparator, humanSizeArrayOriginal);
+        final Person[] sortedByMerge = getSortingResults(mergeSorter, comparator, humanSizeArrayOriginal);
         System.out.println(" Массив отсортированный слиянием = " + Arrays.toString(sortedByMerge));
-        final Person[] sortedByHeap = getSortingResults(heapSorter,comparator, humanSizeArrayOriginal);
+        final Person[] sortedByHeap = getSortingResults(heapSorter, comparator, humanSizeArrayOriginal);
         System.out.println(" Массив отсортированный через кучу = " + Arrays.toString(sortedByHeap));
 
         performComparison(mergeSorter, heapSorter, smallArrayOriginal, "массива их 10K элементов");
         performComparison(mergeSorter, heapSorter, mediumArrayOriginal, "массива их 10оK элементов");
         performComparison(mergeSorter, heapSorter, largeArrayOriginal, "массива их 1М элементов");
-
     }
 
     /**
      * Преобразует суммарное время обработки в наносекундах за заданное число прогонов
      * в среднее время обработки прогона в секундах
-     * @param original - суммарное время обработки в наносекундах
+     *
+     * @param original   - суммарное время обработки в наносекундах
      * @param runsNumber - число прогонов
      * @return - среднее время обработки прогона в секундах
      */
-    private  static double averageMeasurementsToSeconds(long original, int runsNumber) {
-        final double nano = original/(double) runsNumber;
-        return nano / Math.pow(10,9);
+    private static double averageMeasurementsToSeconds(long original, int runsNumber) {
+        final double nano = original / (double) runsNumber;
+        return nano / Math.pow(10, 9);
     }
 
     /**
      * Выполняет сравнение работы сортировщика слиянием и сортировщика через куча на заданном массиве
-     * @param mergeSorter - сортировщик слиянием
-     * @param heapSorter - сортировщик через кучу
-     * @param arrayOriginal - оригинал массива для сравнения. Не будет изменен в ходе сортировки
+     *
+     * @param mergeSorter      - сортировщик слиянием
+     * @param heapSorter       - сортировщик через кучу
+     * @param arrayOriginal    - оригинал массива для сравнения. Не будет изменен в ходе сортировки
      * @param arrayDescription - описание массива для вывода на экран
      */
-    private static void performComparison(Sorter<Person> mergeSorter, Sorter<Person> heapSorter,
-                                          Person[] arrayOriginal, String arrayDescription) {
+    private static void performComparison(
+            Sorter<Person> mergeSorter, Sorter<Person> heapSorter,
+            Person[] arrayOriginal, String arrayDescription) {
         final int runsNumber = 20;
         final Comparator<Person> comparator = new PersonComparator();
         System.out.println("Выполняем " + runsNumber + " проходов, что измерить время сортировки для "
-                + arrayDescription + ":");
+                                   + arrayDescription + ":");
         long measurementMerge = 0;
         mergeSorter.setThrowExceptionOnEqual(true);
         for (int i = 0; i < runsNumber; i++) {
             measurementMerge += measureSortingSpeed(mergeSorter, comparator, arrayOriginal);
         }
         System.out.println("  Средняя оценка времени для сортировки слиянием: = "
-                + averageMeasurementsToSeconds(measurementMerge,  runsNumber));
+                                   + averageMeasurementsToSeconds(measurementMerge, runsNumber));
         long measurementHeap = 0;
         heapSorter.setThrowExceptionOnEqual(true);
         for (int i = 0; i < runsNumber; i++) {
             measurementHeap += measureSortingSpeed(heapSorter, comparator, arrayOriginal);
         }
         System.out.println("  Средняя оценка времени для сортировки через кучу: = "
-                + averageMeasurementsToSeconds(measurementHeap,  runsNumber));
-
+                                   + averageMeasurementsToSeconds(measurementHeap, runsNumber));
     }
 
     /**
      * Измеряет время сортировки данным сортировщиком данного массива в наносекундах
-     * @param sorter - сортировщик
-     * @param comparator - компаратор для сортировки
+     *
+     * @param sorter        - сортировщик
+     * @param comparator    - компаратор для сортировки
      * @param arrayOriginal - оригинал массива. Не будет изменен в ходе сортировки
      * @return - время выполнения сортировщиком сортировки массива в наносекундах
      */
-    private static long measureSortingSpeed(Sorter<Person> sorter, Comparator<Person> comparator,
-                                            Person[] arrayOriginal) {
+    private static long measureSortingSpeed(
+            Sorter<Person> sorter, Comparator<Person> comparator,
+            Person[] arrayOriginal) {
         try {
             final Person[] workCopy = Arrays.copyOf(arrayOriginal, arrayOriginal.length);
             final long start = System.nanoTime();
@@ -108,7 +111,7 @@ public class Main {
             return System.nanoTime() - start;
         } catch (EqualElementsDuringSortException e) {
             System.out.println("   Исключение во время работы сортировщика с массивом длиной " + arrayOriginal.length
-                    + " : " + e.getMessage() + "\n   Повторяем сортировку с начала с подавленными исключениями.");
+                                       + " : " + e.getMessage() + "\n   Повторяем сортировку с начала с подавленными исключениями.");
             sorter.setThrowExceptionOnEqual(false);
             final Person[] workCopy = Arrays.copyOf(arrayOriginal, arrayOriginal.length);
             final long start = System.nanoTime();
@@ -122,20 +125,22 @@ public class Main {
 
     /**
      * Возвращает результат сортировки данным сортировщиком данного массива
-     * @param sorter - сортировщик
-     * @param comparator - компаратор для сортировки
+     *
+     * @param sorter        - сортировщик
+     * @param comparator    - компаратор для сортировки
      * @param arrayOriginal - оригинал массива. Не будет изменен в ходе сортировки
      * @return - отсортированная копия массива
      */
-    private static Person[] getSortingResults(Sorter<Person> sorter, Comparator<Person> comparator,
-                                            Person[] arrayOriginal) {
+    private static Person[] getSortingResults(
+            Sorter<Person> sorter, Comparator<Person> comparator,
+            Person[] arrayOriginal) {
         Person[] workCopy;
         try {
             workCopy = Arrays.copyOf(arrayOriginal, arrayOriginal.length);
             sorter.sort(workCopy, comparator);
         } catch (EqualElementsDuringSortException e) {
             System.out.println("   Исключение во время работы сортировщика с массивом длиной " + arrayOriginal.length
-                    + " : " + e.getMessage() + "\n   Повторяем сортировку с начала с подавленными исключениями.");
+                                       + " : " + e.getMessage() + "\n   Повторяем сортировку с начала с подавленными исключениями.");
             sorter.setThrowExceptionOnEqual(false);
             workCopy = Arrays.copyOf(arrayOriginal, arrayOriginal.length);
             try {

@@ -41,17 +41,19 @@ public class PersonTest {
         final Person differentAgePerson = new Person(Person.Sex.MAN, 40, "Test");
         final Person differentNamePerson = new Person(Person.Sex.MAN, 50, "XYZ");
 
-        Assert.assertEquals("Person is no equal to itself",samePerson1,samePerson1);
-        Assert.assertEquals("Person hash code changes without change of its field",samePerson1.hashCode(),samePerson1.hashCode());
-        Assert.assertEquals("Persons with same attributes are not equal",samePerson1,samePerson2);
-        Assert.assertEquals("Equal persons have different hashes",samePerson1.hashCode(),samePerson2.hashCode());
-        Assert.assertNotEquals("Persons of different sex are equal",samePerson1,differentSexPerson);
-        Assert.assertNotEquals("Different persons have same hash (possible weak has function)",samePerson1.hashCode(),differentSexPerson.hashCode());
-        Assert.assertNotEquals("Persons of different age are equal",samePerson1,differentAgePerson);
-        Assert.assertNotEquals("Different persons have same hash (possible weak has function)",samePerson1.hashCode(),differentAgePerson.hashCode());
-        Assert.assertNotEquals("Persons with different names are equal",samePerson1,differentNamePerson);
-        Assert.assertNotEquals("Different persons have same hash (possible weak has function)",samePerson1.hashCode(),differentNamePerson.hashCode());
-
+        Assert.assertEquals("Person is no equal to itself", samePerson1, samePerson1);
+        Assert.assertEquals("Person hash code changes without change of its field", samePerson1.hashCode(),
+                            samePerson1.hashCode());
+        Assert.assertEquals("Persons with same attributes are not equal", samePerson1, samePerson2);
+        Assert.assertEquals("Equal persons have different hashes", samePerson1.hashCode(), samePerson2.hashCode());
+        Assert.assertNotEquals("Persons of different sex are equal", samePerson1, differentSexPerson);
+        Assert.assertNotEquals("Different persons have same hash (possible weak has function)", samePerson1.hashCode(),
+                               differentSexPerson.hashCode());
+        Assert.assertNotEquals("Persons of different age are equal", samePerson1, differentAgePerson);
+        Assert.assertNotEquals("Different persons have same hash (possible weak has function)", samePerson1.hashCode(),
+                               differentAgePerson.hashCode());
+        Assert.assertNotEquals("Persons with different names are equal", samePerson1, differentNamePerson);
+        Assert.assertNotEquals("Different persons have same hash (possible weak has function)", samePerson1.hashCode(),
+                               differentNamePerson.hashCode());
     }
-
 }

@@ -35,30 +35,33 @@ public class SortersTest {
         final Integer[] noEqualsArr = {1, 2, 3};
         final Integer[] equalsArr = {1, 1, 1};
         final Sorter<Integer> sorter = SortersFactory.getSorter(sorterType, false);
-        Assert.assertNotNull("Internal testing set failure: factory returned null instead of sorter. Check test parameters.", sorter);
+        Assert.assertNotNull(
+                "Internal testing set failure: factory returned null instead of sorter. Check test parameters.",
+                sorter);
         sorter.setThrowExceptionOnEqual(false);
         try {
             sorter.sort(noEqualsArr,
-                    Comparator.comparingInt((Integer i) -> i));
+                        Comparator.comparingInt((Integer i) -> i));
         } catch (EqualElementsDuringSortException e) {
             Assert.fail(sorterName + " threw an exception on array without equals in in");
         }
         try {
             sorter.sort(equalsArr,
-                    Comparator.comparingInt((Integer i) -> i));
+                        Comparator.comparingInt((Integer i) -> i));
         } catch (EqualElementsDuringSortException e) {
-            Assert.fail(sorterName + " threw an exception on array with equals in in, when was forbidden from throwing");
+            Assert.fail(
+                    sorterName + " threw an exception on array with equals in in, when was forbidden from throwing");
         }
         sorter.setThrowExceptionOnEqual(true);
         try {
             sorter.sort(noEqualsArr,
-                    Comparator.comparingInt((Integer i) -> i));
+                        Comparator.comparingInt((Integer i) -> i));
         } catch (EqualElementsDuringSortException e) {
             Assert.fail(sorterName + " threw an exception on array without equals in in");
         }
         try {
             sorter.sort(equalsArr,
-                    Comparator.comparingInt((Integer i) -> i));
+                        Comparator.comparingInt((Integer i) -> i));
             Assert.fail(sorterName + " didn't throw an exception on array with equals in in, when was asked to");
         } catch (EqualElementsDuringSortException ignore) {
         }
@@ -67,7 +70,9 @@ public class SortersTest {
     @Test
     public void testSort() {
         final Sorter<Integer> sorter = SortersFactory.getSorter(sorterType, false);
-        Assert.assertNotNull("Internal testing set failure: factory returned null instead of sorter. Check test parameters.", sorter);
+        Assert.assertNotNull(
+                "Internal testing set failure: factory returned null instead of sorter. Check test parameters.",
+                sorter);
         sorter.setThrowExceptionOnEqual(false);
         try {
             sorter.sort(null, Comparator.comparingInt((Integer i) -> i));
@@ -76,13 +81,15 @@ public class SortersTest {
             final Integer[] multiple = {1, 10, 2, 9, 3, 8, 4, 7, 5, 6};
             sorter.sort(multiple, Comparator.comparingInt((Integer i) -> i));
             for (int i = 0; i < multiple.length - 1; i++) {
-                Assert.assertTrue(sorterName + " returned not fully sorted array", multiple[i] <= multiple[i+1]);
+                Assert.assertTrue(sorterName + " returned not fully sorted array", multiple[i] <= multiple[i + 1]);
             }
         } catch (EqualElementsDuringSortException e) {
             Assert.fail(sorterName + " threw an exception on array, when was forbidden from throwing");
         }
         final Sorter<Double> sorterDouble = SortersFactory.getSorter(sorterType, false);
-        Assert.assertNotNull("Internal testing set failure: factory returned null instead of sorter. Check test parameters.", sorter);
+        Assert.assertNotNull(
+                "Internal testing set failure: factory returned null instead of sorter. Check test parameters.",
+                sorter);
         sorter.setThrowExceptionOnEqual(false);
         try {
             final Double[] array = new Double[significantAmount];
@@ -91,11 +98,10 @@ public class SortersTest {
             }
             sorterDouble.sort(array, Comparator.comparingDouble((Double i) -> i));
             for (int i = 0; i < array.length - 1; i++) {
-                Assert.assertTrue(sorterName + " returned not fully sorted array", array[i] <= array[i+1]);
+                Assert.assertTrue(sorterName + " returned not fully sorted array", array[i] <= array[i + 1]);
             }
         } catch (EqualElementsDuringSortException e) {
             Assert.fail(sorterName + " threw an exception on array, when was forbidden from throwing");
         }
-
     }
 }

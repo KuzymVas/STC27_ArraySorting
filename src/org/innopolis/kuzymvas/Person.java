@@ -17,9 +17,10 @@ public class Person {
     }
 
     /**
-     *  Создает новый иммутабельный объект Person
-     * @param sex - пол
-     * @param age - возраст в интверале [0-100]
+     * Создает новый иммутабельный объект Person
+     *
+     * @param sex  - пол
+     * @param age  - возраст в интверале [0-100]
      * @param name - имя.
      */
     public Person(Sex sex, int age, String name) {
@@ -49,8 +50,12 @@ public class Person {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Person person = (Person) o;
         return age == person.age &&
                 sex == person.sex &&
@@ -67,7 +72,7 @@ public class Person {
         return "{" +
                 "Пол:" + sex +
                 ", Возраст:" + age +
-                ", Имя:" + name  +
+                ", Имя:" + name +
                 '}';
     }
 }

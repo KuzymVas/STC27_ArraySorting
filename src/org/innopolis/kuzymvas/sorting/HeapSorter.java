@@ -15,7 +15,6 @@ public class HeapSorter<T> implements Sorter<T> {
         this.throwExceptionOnEqual = throwExceptionOnEqual;
     }
 
-
     @Override
     public void sort(T[] array, Comparator<T> comparator) throws EqualElementsDuringSortException {
         if (comparator == null) {
@@ -30,6 +29,7 @@ public class HeapSorter<T> implements Sorter<T> {
 
     /**
      * Сравнивает два объекта с помощью текущего компаратора
+     *
      * @param o1 - первый объект для сравнения
      * @param o2 - второй объейт для сравнения
      * @return - true, если первый объект строго больше второго, false в противном случае
@@ -44,6 +44,7 @@ public class HeapSorter<T> implements Sorter<T> {
 
     /**
      * Сортировка массива с помощью бинарной кучи
+     *
      * @param array - сортируемый массив
      * @throws EqualElementsDuringSortException - будет выброшено, если установлен флаг и алгоритм обнаружит равные элементы
      */
@@ -66,7 +67,8 @@ public class HeapSorter<T> implements Sorter<T> {
     /**
      * Преобразует в бинарную кучу часть массива, начинающуюся с заданной позиции корня.
      * Ожидает, что оба поддерева корня уже являются бинарными кучами.
-     * @param array - массив, содержащий бинарную кучу
+     *
+     * @param array   - массив, содержащий бинарную кучу
      * @param rootPos - позиция корня кучи (оба поддерев должны уже быть кучами)
      * @param heapEnd - конец  пространства (не включительно), занимаемого кучей в массиве
      * @throws EqualElementsDuringSortException - будет выброшено, если установлен флаг и алгоритм обнаружит равные элементы
@@ -91,7 +93,6 @@ public class HeapSorter<T> implements Sorter<T> {
             heapifyRoot(array, largestPos, heapEnd);
         }
     }
-
 
     @Override
     public void setThrowExceptionOnEqual(boolean throwExceptionOnEqual) {

@@ -16,17 +16,20 @@ public class SortersFactory {
 
     /**
      * Возвращает сортировщик заданного типа
-     * @param type - тип сортировщика
+     *
+     * @param type                  - тип сортировщика
      * @param throwExceptionOnEqual - начальное значение флага выброса исключений. Передается в конструктор сортировщика.
-     * @param <T> - тип сортируемых значений
+     * @param <T>                   - тип сортируемых значений
      * @return - сортировщик заданного типа
      */
     public static <T> Sorter<T> getSorter(SorterType type, boolean throwExceptionOnEqual) {
         switch (type) {
-            case MERGE: return new MergeSorter<>(throwExceptionOnEqual);
-            case HEAP:  return new HeapSorter<>(throwExceptionOnEqual);
-            default: return null;
+            case MERGE:
+                return new MergeSorter<>(throwExceptionOnEqual);
+            case HEAP:
+                return new HeapSorter<>(throwExceptionOnEqual);
+            default:
+                return null;
         }
     }
-
 }
