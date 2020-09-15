@@ -1,21 +1,56 @@
 package org.innopolis.kuzymvas;
 
+import org.innopolis.kuzymvas.exceptions.SameAgeNamePersonsException;
 import org.junit.Assert;
 import org.junit.Test;
 
 public class PersonComparatorTest {
 
     @Test
+    public void testException() {
+        final Person originalPerson = new Person(Person.Sex.WOMAN, 42, "Danny");
+        final Person differentAgePerson = new Person(Person.Sex.WOMAN, 24, "Danny");
+        final Person differentNamePerson = new Person(Person.Sex.WOMAN, 42, "Anny");
+        final Person differentSexPerson = new Person(Person.Sex.MAN, 42, "Danny");
+
+        final PersonComparator comparatorExceptionsDisallowed = new PersonComparator(false);
+        try {
+            comparatorExceptionsDisallowed.compare(originalPerson, differentAgePerson);
+            comparatorExceptionsDisallowed.compare(originalPerson, differentNamePerson);
+        } catch (SameAgeNamePersonsException e) {
+            Assert.fail("Comparator threw an exception on comparisons, which shouldn't generate an exception");
+        }
+        try {
+            comparatorExceptionsDisallowed.compare(originalPerson, differentSexPerson);
+        } catch (SameAgeNamePersonsException e) {
+            Assert.fail(
+                    "Comparator threw an exception on comparison, which should generate an exception, when was forbidden from throwing");
+        }
+        final PersonComparator comparatorExceptionsAllowed = new PersonComparator(true);
+        try {
+            comparatorExceptionsAllowed.compare(originalPerson, differentAgePerson);
+            comparatorExceptionsAllowed.compare(originalPerson, differentNamePerson);
+        } catch (SameAgeNamePersonsException e) {
+            Assert.fail("Comparator threw an exception on comparisons, which shouldn't generate an exception");
+        }
+        try {
+            comparatorExceptionsAllowed.compare(originalPerson, differentSexPerson);
+            Assert.fail("Comparator didn't throw an exception on comparison, which should generate an exception");
+        } catch (SameAgeNamePersonsException ignore) {
+        }
+    }
+
+    @Test
     public void testCompare() {
-        final Person personLesserSex = new Person(Person.Sex.MAN, 40, "Bbbb");
-        final Person personGreaterSex = new Person(Person.Sex.WOMAN, 50, "Aaaa");
-        final Person personLesserAge = new Person(Person.Sex.WOMAN, 50, "Bbbb");
-        final Person personGreaterAge = new Person(Person.Sex.WOMAN, 40, "Aaaa");
-        final Person personLesserName = new Person(Person.Sex.WOMAN, 40, "Aaaa");
-        final Person personGreaterName = new Person(Person.Sex.WOMAN, 40, "Bbbb");
-        final Person samePerson1 = new Person(Person.Sex.WOMAN, 40, "Aaaa");
-        final Person samePerson2 = new Person(Person.Sex.WOMAN, 40, "Aaaa");
-        final PersonComparator comparator = new PersonComparator();
+        final Person personLesserSex = new Person(Person.Sex.MAN, 40, "Beth");
+        final Person personGreaterSex = new Person(Person.Sex.WOMAN, 50, "Aaron");
+        final Person personLesserAge = new Person(Person.Sex.WOMAN, 50, "Beth");
+        final Person personGreaterAge = new Person(Person.Sex.WOMAN, 40, "Aaron");
+        final Person personLesserName = new Person(Person.Sex.WOMAN, 40, "Aaron");
+        final Person personGreaterName = new Person(Person.Sex.WOMAN, 40, "Beth");
+        final Person samePerson1 = new Person(Person.Sex.WOMAN, 40, "Aaron");
+        final Person samePerson2 = new Person(Person.Sex.WOMAN, 40, "Aaron");
+        final PersonComparator comparator = new PersonComparator(false);
         Assert.assertEquals("Person c полем пол MAN не меньше Person с полем пол WOMAN", -1,
                             comparator.compare(personLesserSex, personGreaterSex));
         Assert.assertEquals("Person c полем пол WOMAN не больше Person с полем пол MAN", 1,

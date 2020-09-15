@@ -1,6 +1,6 @@
 package org.innopolis.kuzymvas;
 
-import org.innopolis.kuzymvas.exceptions.EqualElementsDuringSortException;
+import org.innopolis.kuzymvas.exceptions.SameAgeNamePersonsException;
 import org.innopolis.kuzymvas.sorting.HeapSorter;
 import org.innopolis.kuzymvas.sorting.MergeSorter;
 import org.innopolis.kuzymvas.sorting.Sorter;
@@ -33,15 +33,18 @@ public class Main {
         final Person[] mediumArrayOriginal = generator.generatePersons(100_000);
         final Person[] largeArrayOriginal = generator.generatePersons(1_000_000);
 
-        final Sorter<Person> mergeSorter = new MergeSorter<>(true);
-        final Sorter<Person> heapSorter = new HeapSorter<>(true);
+        final Sorter<Person> mergeSorter = new MergeSorter<>();
+        final Sorter<Person> heapSorter = new HeapSorter<>();
 
-        final Comparator<Person> comparator = new PersonComparator();
+        final Comparator<Person> comparatorExceptionsAllowed = new PersonComparator(true);
+        final Comparator<Person> comparatorExceptionsDisallowed = new PersonComparator(false);
         System.out.println("Демонстрация работы сортировщиков:");
         System.out.println(" Исходный массив = " + Arrays.toString(humanSizeArrayOriginal));
-        final Person[] sortedByMerge = getSortingResults(mergeSorter, comparator, humanSizeArrayOriginal);
+        final Person[] sortedByMerge = getSortingResults(mergeSorter, comparatorExceptionsAllowed,
+                                                         comparatorExceptionsDisallowed, humanSizeArrayOriginal);
         System.out.println(" Массив отсортированный слиянием = " + Arrays.toString(sortedByMerge));
-        final Person[] sortedByHeap = getSortingResults(heapSorter, comparator, humanSizeArrayOriginal);
+        final Person[] sortedByHeap = getSortingResults(heapSorter, comparatorExceptionsAllowed,
+                                                        comparatorExceptionsDisallowed, humanSizeArrayOriginal);
         System.out.println(" Массив отсортированный через кучу = " + Arrays.toString(sortedByHeap));
 
         performComparison(mergeSorter, heapSorter, smallArrayOriginal, "массива их 10K элементов");
@@ -74,23 +77,36 @@ public class Main {
             Sorter<Person> mergeSorter, Sorter<Person> heapSorter,
             Person[] arrayOriginal, String arrayDescription) {
         final int runsNumber = 20;
-        final Comparator<Person> comparator = new PersonComparator();
         System.out.println("Выполняем " + runsNumber + " проходов, что измерить время сортировки для "
                                    + arrayDescription + ":");
-        long measurementMerge = 0;
-        mergeSorter.setThrowExceptionOnEqual(true);
-        for (int i = 0; i < runsNumber; i++) {
-            measurementMerge += measureSortingSpeed(mergeSorter, comparator, arrayOriginal);
-        }
+        long measurementMerge = getMeasurementOverMultipleRuns(mergeSorter, arrayOriginal, runsNumber);
         System.out.println("  Средняя оценка времени для сортировки слиянием: = "
                                    + averageMeasurementsToSeconds(measurementMerge, runsNumber));
-        long measurementHeap = 0;
-        heapSorter.setThrowExceptionOnEqual(true);
-        for (int i = 0; i < runsNumber; i++) {
-            measurementHeap += measureSortingSpeed(heapSorter, comparator, arrayOriginal);
-        }
+        long measurementHeap = getMeasurementOverMultipleRuns(heapSorter, arrayOriginal, runsNumber);
         System.out.println("  Средняя оценка времени для сортировки через кучу: = "
                                    + averageMeasurementsToSeconds(measurementHeap, runsNumber));
+    }
+
+    private static long getMeasurementOverMultipleRuns(
+            Sorter<Person> sorter, Person[] arrayOriginal, int runsNumber) {
+        Comparator<Person> comparatorExceptionsAllowed = new PersonComparator(true);
+        Comparator<Person> comparatorExceptionsDisallowed = new PersonComparator(false);
+        long measurementMerge = 0;
+        try {
+            for (int i = 0; i < runsNumber; i++) {
+                measurementMerge += measureSortingSpeed(sorter, comparatorExceptionsAllowed,
+                                                        arrayOriginal);
+            }
+        } catch (SameAgeNamePersonsException e) {
+            System.out.println("    Перехвачено исключение, вызванное сравнением людей с одинаковым именем и возрастом: " + e.getMessage());
+            System.out.println("    Перезапускаем обработку, подавив выброс исключений.");
+            measurementMerge = 0;
+            for (int i = 0; i < runsNumber; i++) {
+                measurementMerge += measureSortingSpeed(sorter, comparatorExceptionsDisallowed,
+                                                        arrayOriginal);
+            }
+        }
+        return measurementMerge;
     }
 
     /**
@@ -103,49 +119,37 @@ public class Main {
      */
     private static long measureSortingSpeed(
             Sorter<Person> sorter, Comparator<Person> comparator,
-            Person[] arrayOriginal) {
-        try {
-            final Person[] workCopy = Arrays.copyOf(arrayOriginal, arrayOriginal.length);
-            final long start = System.nanoTime();
-            sorter.sort(workCopy, comparator);
-            return System.nanoTime() - start;
-        } catch (EqualElementsDuringSortException e) {
-            System.out.println("   Исключение во время работы сортировщика с массивом длиной " + arrayOriginal.length
-                                       + " : " + e.getMessage() + "\n   Повторяем сортировку с начала с подавленными исключениями.");
-            sorter.setThrowExceptionOnEqual(false);
-            final Person[] workCopy = Arrays.copyOf(arrayOriginal, arrayOriginal.length);
-            final long start = System.nanoTime();
-            try {
-                sorter.sort(workCopy, comparator);
-            } catch (EqualElementsDuringSortException ignored) {
-            }
-            return System.nanoTime() - start;
-        }
+            Person[] arrayOriginal) throws SameAgeNamePersonsException {
+        final Person[] workCopy = Arrays.copyOf(arrayOriginal, arrayOriginal.length);
+        final long start = System.nanoTime();
+        sorter.sort(workCopy, comparator);
+        return System.nanoTime() - start;
     }
 
     /**
      * Возвращает результат сортировки данным сортировщиком данного массива
      *
-     * @param sorter        - сортировщик
-     * @param comparator    - компаратор для сортировки
-     * @param arrayOriginal - оригинал массива. Не будет изменен в ходе сортировки
+     * @param sorter                         - сортировщик
+     * @param comparatorExceptionsAllowed    - компаратор для сортировки со включенными исключениями
+     * @param comparatorExceptionsDisallowed - компаратор для сортировки с подавленными исключениями
+     * @param arrayOriginal                  - оригинал массива. Не будет изменен в ходе сортировки
      * @return - отсортированная копия массива
      */
     private static Person[] getSortingResults(
-            Sorter<Person> sorter, Comparator<Person> comparator,
+            Sorter<Person> sorter, Comparator<Person> comparatorExceptionsAllowed,
+            Comparator<Person> comparatorExceptionsDisallowed,
             Person[] arrayOriginal) {
         Person[] workCopy;
         try {
             workCopy = Arrays.copyOf(arrayOriginal, arrayOriginal.length);
-            sorter.sort(workCopy, comparator);
-        } catch (EqualElementsDuringSortException e) {
+            sorter.sort(workCopy, comparatorExceptionsAllowed);
+        } catch (SameAgeNamePersonsException e) {
             System.out.println("   Исключение во время работы сортировщика с массивом длиной " + arrayOriginal.length
                                        + " : " + e.getMessage() + "\n   Повторяем сортировку с начала с подавленными исключениями.");
-            sorter.setThrowExceptionOnEqual(false);
             workCopy = Arrays.copyOf(arrayOriginal, arrayOriginal.length);
             try {
-                sorter.sort(workCopy, comparator);
-            } catch (EqualElementsDuringSortException ignored) {
+                sorter.sort(workCopy, comparatorExceptionsDisallowed);
+            } catch (SameAgeNamePersonsException ignored) {
             }
         }
         return workCopy;

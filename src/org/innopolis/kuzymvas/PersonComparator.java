@@ -1,11 +1,20 @@
 package org.innopolis.kuzymvas;
 
+import org.innopolis.kuzymvas.exceptions.SameAgeNamePersonsException;
+
 import java.util.Comparator;
 
 /**
  * Минимальная реализация компаратора для класса Person
  */
 public class PersonComparator implements Comparator<Person> {
+
+    // Флаг, регулирующий выбрасывание исключений
+    private final boolean allowExceptions;
+
+    public PersonComparator(boolean allowExceptions) {
+        this.allowExceptions = allowExceptions;
+    }
 
     /**
      * Сравнивает два объекта класса Person и возвращает -1, если p1 меньше(первее) p2,
@@ -20,6 +29,12 @@ public class PersonComparator implements Comparator<Person> {
      */
     @Override
     public int compare(Person p1, Person p2) {
+        if (allowExceptions) {
+            if ((p1.getAge() == p2.getAge())
+                    && (p1.getName().equals(p2.getName()))) {
+                throw new SameAgeNamePersonsException("Comparator encountered two persons with same age and name");
+            }
+        }
         if (p1 == p2) {
             return 0;
         }

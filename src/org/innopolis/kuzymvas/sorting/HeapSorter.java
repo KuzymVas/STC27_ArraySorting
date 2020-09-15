@@ -1,22 +1,16 @@
 package org.innopolis.kuzymvas.sorting;
 
-import org.innopolis.kuzymvas.exceptions.EqualElementsDuringSortException;
+import org.innopolis.kuzymvas.exceptions.SameAgeNamePersonsException;
 
 import java.util.Comparator;
 
 public class HeapSorter<T> implements Sorter<T> {
 
-    // Флаг, регулирующий выбрасывание исключений
-    private boolean throwExceptionOnEqual;
     // Текущий компаратор
     private Comparator<T> currentComparator;
 
-    public HeapSorter(boolean throwExceptionOnEqual) {
-        this.throwExceptionOnEqual = throwExceptionOnEqual;
-    }
-
     @Override
-    public void sort(T[] array, Comparator<T> comparator) throws EqualElementsDuringSortException {
+    public void sort(T[] array, Comparator<T> comparator) throws SameAgeNamePersonsException {
         if (comparator == null) {
             throw new IllegalArgumentException("Comparator can't be null");
         }
@@ -33,12 +27,8 @@ public class HeapSorter<T> implements Sorter<T> {
      * @param o1 - первый объект для сравнения
      * @param o2 - второй объейт для сравнения
      * @return - true, если первый объект строго больше второго, false в противном случае
-     * @throws EqualElementsDuringSortException - будет выброшено, если установлен флаг и объекты равны
      */
-    private boolean greaterThan(T o1, T o2) throws EqualElementsDuringSortException {
-        if (throwExceptionOnEqual && currentComparator.compare(o1, o2) == 0) {
-            throw new EqualElementsDuringSortException("Heap sorter encountered equal elements during the sorting");
-        }
+    private boolean greaterThan(T o1, T o2) {
         return currentComparator.compare(o1, o2) > 0;
     }
 
@@ -46,9 +36,8 @@ public class HeapSorter<T> implements Sorter<T> {
      * Сортировка массива с помощью бинарной кучи
      *
      * @param array - сортируемый массив
-     * @throws EqualElementsDuringSortException - будет выброшено, если установлен флаг и алгоритм обнаружит равные элементы
      */
-    private void heapSort(T[] array) throws EqualElementsDuringSortException {
+    private void heapSort(T[] array) {
         // Строим кучу на весь массив (идем с конца, начиная с последнего элемента, у которого есть потомки)
         for (int i = array.length / 2 - 1; i >= 0; i--) {
             heapifyRoot(array, i, array.length);
@@ -71,9 +60,8 @@ public class HeapSorter<T> implements Sorter<T> {
      * @param array   - массив, содержащий бинарную кучу
      * @param rootPos - позиция корня кучи (оба поддерев должны уже быть кучами)
      * @param heapEnd - конец  пространства (не включительно), занимаемого кучей в массиве
-     * @throws EqualElementsDuringSortException - будет выброшено, если установлен флаг и алгоритм обнаружит равные элементы
      */
-    private void heapifyRoot(T[] array, int rootPos, int heapEnd) throws EqualElementsDuringSortException {
+    private void heapifyRoot(T[] array, int rootPos, int heapEnd) {
         int largestPos = rootPos;
         final int leftChildPos = 2 * rootPos + 1;
         final int rightChildPos = 2 * rootPos + 2;
@@ -92,10 +80,5 @@ public class HeapSorter<T> implements Sorter<T> {
             // Рекурсивно восстанавливаем кучу, спускаясь в поддерево, с которым обменяли элемент
             heapifyRoot(array, largestPos, heapEnd);
         }
-    }
-
-    @Override
-    public void setThrowExceptionOnEqual(boolean throwExceptionOnEqual) {
-        this.throwExceptionOnEqual = throwExceptionOnEqual;
     }
 }

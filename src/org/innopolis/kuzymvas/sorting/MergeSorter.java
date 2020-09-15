@@ -1,23 +1,15 @@
 package org.innopolis.kuzymvas.sorting;
 
-import org.innopolis.kuzymvas.exceptions.EqualElementsDuringSortException;
-
 import java.util.Arrays;
 import java.util.Comparator;
 
 public class MergeSorter<T> implements Sorter<T> {
 
-    // Флаг, регулирующий выбрасывание исключений
-    private boolean throwExceptionOnEqual;
     // Текущий компаратор
     private Comparator<T> currentComparator;
 
-    public MergeSorter(boolean throwExceptionOnEqual) {
-        this.throwExceptionOnEqual = throwExceptionOnEqual;
-    }
-
     @Override
-    public void sort(T[] array, Comparator<T> comparator) throws EqualElementsDuringSortException {
+    public void sort(T[] array, Comparator<T> comparator) {
         if (comparator == null) {
             throw new IllegalArgumentException("Comparator can't be null");
         }
@@ -35,12 +27,8 @@ public class MergeSorter<T> implements Sorter<T> {
      * @param o1 - первый объект
      * @param o2 - второй объект
      * @return - true, если первый объект меньше или равен второму, false иначе
-     * @throws EqualElementsDuringSortException - будет выброшено, если установлен флаг и объекты равны
      */
-    private boolean lessOrEquals(T o1, T o2) throws EqualElementsDuringSortException {
-        if (throwExceptionOnEqual && currentComparator.compare(o1, o2) == 0) {
-            throw new EqualElementsDuringSortException("Merge sorter encountered equal elements during the sorting");
-        }
+    private boolean lessOrEquals(T o1, T o2) {
         return currentComparator.compare(o1, o2) <= 0;
     }
 
@@ -52,9 +40,8 @@ public class MergeSorter<T> implements Sorter<T> {
      * @param dest   - целевой массив, который будет заполнен рузльтатом сортировки
      * @param start  - индекс начального элемента области сортировки
      * @param end    - индекс конечного (не включительно) элемента области сортировки
-     * @throws EqualElementsDuringSortException - будет выброшено, если установлен флаг и алгоритм обнаружит равные элементы
      */
-    private void topDownSplitMerge(T[] source, T[] dest, int start, int end) throws EqualElementsDuringSortException {
+    private void topDownSplitMerge(T[] source, T[] dest, int start, int end) {
         if ((end - start) <= 1) { // Массивы из одного элемента считаются отсортированными
             return;
         }
@@ -73,10 +60,9 @@ public class MergeSorter<T> implements Sorter<T> {
      * @param start  - индекс начального элемента области сортировким
      * @param middle - индекс точки разделения двух отсортированных частей (конец первой (не включительно) и начало второй)
      * @param end-   индекс конечного (не включительно) элемента области сортировки
-     * @throws EqualElementsDuringSortException - будет выброшено, если установлен флаг и алгоритм обнаружит равные элементы
      */
     private void topDownMerge(
-            T[] source, T[] dest, int start, int middle, int end) throws EqualElementsDuringSortException {
+            T[] source, T[] dest, int start, int middle, int end) {
         int leftPos = start;
         int rightPos = middle;
         for (int i = start; i < end; i++) {
@@ -89,10 +75,5 @@ public class MergeSorter<T> implements Sorter<T> {
                 rightPos++;
             }
         }
-    }
-
-    @Override
-    public void setThrowExceptionOnEqual(boolean throwExceptionOnEqual) {
-        this.throwExceptionOnEqual = throwExceptionOnEqual;
     }
 }
